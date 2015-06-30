@@ -111,17 +111,19 @@ M = blkdiag(M1,M2);
 
 %Initial Condition
 TP = 4; %Number of Time Points
-Time1 = t0:tau:tend/TP;
-Time2 = tend/TP:tau:2*tend/TP;
-Time3 = 2*tend/TP:tau:3*tend/TP;
-Time4 = 3*tend/TP:tau:tend;
+w = length(TP); %Stores the time points 
+
+Time1 = t0:             tau:    tend/TP;
+Time2 = tend/TP +   tau:tau:    2*tend/TP;
+Time3 = 2*tend/TP + tau:tau:    3*tend/TP;
+Time4 = 3*tend/TP + tau:tau:    tend;
 
 u = zeros(length(x),length(t)+TP-1);
 for i = 1:length(x1)
         u(i,1) = C_0f/l1;
 end
 
-v = zeros(length(x),length(TP)); %Stores u values at time points before reset
+v = zeros(length(x2),length(TP)); %Stores u values at time points before reset
 
 theta = 1;
 LHS = M/tau + theta*A;
@@ -131,40 +133,39 @@ for n = 1:length(Time1)-1
     u(:,n+1) = LHS\RHS;
 end
 
-v(:,1) = u(:,length(Time1));
-
 for i = 1:length(x2)
+v(i,1) = u(length(x1)+i,length(Time1));
 u(length(x1) + i,length(Time1)) = 0;
 end
 
-for n = length(Time1):length(Time2)-1
+for n = length(Time1):length(Time1) + length(Time2) - 1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
 end
-
-v(:,2) = u(:,length(Time2));
 
 for i = 1:length(x2)
-u(length(x1) + i,length(Time2)) = 0;
+v(i,2) = u(length(x1)+i,length(Time1) + length(Time2));
+u(length(x1) + i,length(Time1)+length(Time2)) = 0;
 end
 
-for n = length(Time1)+length(Time2):length(Time3)-1
+for n = length(Time1)+length(Time2):length(Time1)+length(Time2)+ length(Time3) - 1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
 end
-
-v(:,3) = u(:,length(Time3));
 
 for i = 1:length(x2)
-u(length(x1) + i,length(Time3)) = 0;
+v(i,3) = u(length(x1)+i,length(Time1) + length(Time2) + length(Time3));
+u(length(x1) + i,length(Time1)+length(Time2)+length(Time3)) = 0;
 end
 
-for n = length(Time1)+length(Time2)+length(Time3):length(Time4)-1
+for n = length(Time1)+length(Time2)+length(Time3):length(Time1)+length(Time2)+length(Time3)+length(Time4)-1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
 end
 
-v(:,4) = u(:,end);
+for i = 1:length(x2)
+v(i,4) = u(length(x1)+i,t(end));
+end
 
 toc %Ends implementation time
 

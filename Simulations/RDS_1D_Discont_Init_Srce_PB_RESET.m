@@ -1,4 +1,4 @@
-function [u,x1,x2,t,v] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,p)
+function [u,x1,x2,t,v,w] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,p)
 % A function to solve the following reaction diffusion equation:
 %C_t = D(x)C_xx + f(x,t) where f(x,t) is seperable in x and t and D is
 %constant on different regions of the domain.
@@ -111,17 +111,24 @@ M = blkdiag(M1,M2);
 
 %Initial Condition
 TP = 4; %Number of Time Points
-Time1 = t0:             tau:    tend/TP;
-Time2 = tend/TP +   tau:tau:    2*tend/TP;
-Time3 = 2*tend/TP + tau:tau:    3*tend/TP;
-Time4 = 3*tend/TP + tau:tau:    tend;
+w = length(TP); %Stores the time points 
+w(1) = t0;
+w(2) = tend/TP;
+w(3) = 2*tend/TP;
+w(4) = 3*tend/TP;
+w(5) = tend;
+
+Time1 = t0:             tau:    w(2);
+Time2 = tend/TP +   tau:tau:    w(3);
+Time3 = 2*tend/TP + tau:tau:    w(4);
+Time4 = 3*tend/TP + tau:tau:    w(5);
 
 u = zeros(length(x),length(t)+TP-1);
 for i = 1:length(x1)
         u(i,1) = C_0f/l1;
 end
 
-v = zeros(length(x),length(TP)); %Stores u values at time points before reset
+v = zeros(length(x2),length(TP)); %Stores u values at time points before reset
 
 theta = 1;
 LHS = M/tau + theta*A;
@@ -131,9 +138,8 @@ for n = 1:length(Time1)-1
     u(:,n+1) = LHS\RHS;
 end
 
-v(:,1) = u(:,length(Time1));
-
 for i = 1:length(x2)
+v(i,1) = u(length(x1)+i,length(Time1));
 u(length(x1) + i,length(Time1)) = 0;
 end
 
@@ -142,9 +148,8 @@ for n = length(Time1):length(Time1) + length(Time2) - 1
     u(:,n+1) = LHS\RHS;
 end
 
-v(:,2) = u(:,length(Time2));
-
 for i = 1:length(x2)
+v(i,2) = u(length(x1)+i,length(Time1) + length(Time2));
 u(length(x1) + i,length(Time1)+length(Time2)) = 0;
 end
 
@@ -153,9 +158,8 @@ for n = length(Time1)+length(Time2):length(Time1)+length(Time2)+ length(Time3) -
     u(:,n+1) = LHS\RHS;
 end
 
-v(:,3) = u(:,length(Time3));
-
 for i = 1:length(x2)
+v(i,3) = u(length(x1)+i,length(Time1) + length(Time2) + length(Time3));
 u(length(x1) + i,length(Time1)+length(Time2)+length(Time3)) = 0;
 end
 
@@ -164,7 +168,9 @@ for n = length(Time1)+length(Time2)+length(Time3):length(Time1)+length(Time2)+le
     u(:,n+1) = LHS\RHS;
 end
 
-v(:,4) = u(:,end);
+for i = 1:length(x2)
+v(i,4) = u(length(x1)+i,t(end));
+end
 
 toc %Ends implementation time
 
