@@ -111,10 +111,10 @@ M = blkdiag(M1,M2);
 
 %Initial Condition
 TP = 4; %Number of Time Points
-Time1 = t0:             tau:    tend/TP;
-Time2 = tend/TP +   tau:tau:    2*tend/TP;
-Time3 = 2*tend/TP + tau:tau:    3*tend/TP;
-Time4 = 3*tend/TP + tau:tau:    tend;
+Time1 = t0:tau:tend/TP;
+Time2 = tend/TP:tau:2*tend/TP;
+Time3 = 2*tend/TP:tau:3*tend/TP;
+Time4 = 3*tend/TP:tau:tend;
 
 u = zeros(length(x),length(t)+TP-1);
 for i = 1:length(x1)
@@ -137,7 +137,7 @@ for i = 1:length(x2)
 u(length(x1) + i,length(Time1)) = 0;
 end
 
-for n = length(Time1):length(Time1) + length(Time2) - 1
+for n = length(Time1):length(Time2)-1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
 end
@@ -145,10 +145,10 @@ end
 v(:,2) = u(:,length(Time2));
 
 for i = 1:length(x2)
-u(length(x1) + i,length(Time1)+length(Time2)) = 0;
+u(length(x1) + i,length(Time2)) = 0;
 end
 
-for n = length(Time1)+length(Time2):length(Time1)+length(Time2)+ length(Time3) - 1
+for n = length(Time1)+length(Time2):length(Time3)-1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
 end
@@ -156,10 +156,10 @@ end
 v(:,3) = u(:,length(Time3));
 
 for i = 1:length(x2)
-u(length(x1) + i,length(Time1)+length(Time2)+length(Time3)) = 0;
+u(length(x1) + i,length(Time3)) = 0;
 end
 
-for n = length(Time1)+length(Time2)+length(Time3):length(Time1)+length(Time2)+length(Time3)+length(Time4)-1
+for n = length(Time1)+length(Time2)+length(Time3):length(Time4)-1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
 end
