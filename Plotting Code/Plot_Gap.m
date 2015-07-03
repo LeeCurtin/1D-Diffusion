@@ -3,7 +3,7 @@ function [ ] = Plot_Gap( gap,P1,P2,P3,P4 )
 %one domain point over time with different gap lengths and P values.
 figure(1)
 
-for i = size(P1,2)% 1:size(P1,2)
+for i = 1:size(P1,2)
 plot(gap,P3(:,i),'Color',[0.9290 0.6940 0.1250]);
 hold on
 plot(gap,P2(:,i),'Color',[0.8500 0.3250 0.0980]);

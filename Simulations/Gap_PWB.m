@@ -1,8 +1,8 @@
-function [l1,store1,store2,store3,store4 ] = Gap_PWB(h,l1,l3,tau,tend )
+function [l2,store1,store2,store3,store4 ] = Gap_PWB(h,l1,l3,tau,tend )
 %Function to produce nice graphs about the differing CSF gap sizes
 
 n = 10;
-m = 50;
+m = 5;
 
 [u,x1,x2,t] = RDS_1D_Discont_Init_Srce_PB(h/5,l1,l3,tau,tend,1.82);
 store = zeros(length(x2),length(t));
@@ -65,7 +65,7 @@ store4(i+1,:) = sum(store)/length(x3);
 clear store
 end
 
-l1 = 0:1/n:m/n;
+l2 = 0:1/n:m/n;
 
 % figure(3)
 % plot(l1,storeP05(:,end))

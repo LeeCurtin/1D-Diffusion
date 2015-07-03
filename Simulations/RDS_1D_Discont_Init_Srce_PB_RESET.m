@@ -1,4 +1,4 @@
-function [u,x1,x2,t,v,w] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,p)
+function [u,x1,x2,t,v,w] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,k)
 % A function to solve the following reaction diffusion equation:
 %C_t = D(x)C_xx + f(x,t) where f(x,t) is seperable in x and t and D is
 %constant on different regions of the domain.
@@ -41,10 +41,9 @@ t0 = 0;
 t = t0:tau:tend;
 
 %Properties
-% p = 0.5; %Octanol-Water Coefficient
-k = 0.0625; %Rate of splitting of drug and paste
-C_0b = 1; %Initial 'bound' drug
-C_0f = 1; %Initial 'free' drug
+% k = 0.0625; %Rate of splitting of drug and paste
+C_0b = 0.5; %Initial 'bound' drug
+C_0f = 0.5; %Initial 'free' drug
 C_0 = C_0b + C_0f; %Total drug in system
 
 
@@ -60,7 +59,7 @@ Dir = [0,0,0,0]; % Dirichlet Boundary Conditions
 
     
 function [D] = Diffusivity1(x1) 
-D1 = 3600*50.e-6;   %Diffusion coefficient (mm^2/h) in wafer for Carmustine
+D1 = 3600*50.e-5;   %Diffusion coefficient (mm^2/h) in wafer for Carmustine
 for i = 1:length(x1)
         D = D1;
 end
@@ -68,10 +67,10 @@ end
 end
 
 function [D] = Diffusivity2(x2)
-D3 = 3600*25.e-5; %" " " normal brain tissue for Carmustine
+D2 = 3600*50.e-5;  %" " " water for Carmustine
 
 for i = 1:length(x2)
-        D = D3;
+        D = D2;
 end
 
 end
@@ -96,7 +95,7 @@ N=2;
 
 A1 = GaussStiffnessAssembler1D_Diff(x1,Dir,w,@Diffusivity1,y);
 A2 = GaussStiffnessAssembler1D_Diff(x2,Dir,w,@Diffusivity2,y);
-A = StiffnessAssemblerDiscont2(A1,A2,1,p); %MAKE A NEW FUNCTION FOR TWO SUBDOMAINS
+A = StiffnessAssemblerDiscont2(A1,A2,1,1); %MAKE A NEW FUNCTION FOR TWO SUBDOMAINS
 
 b1 = GaussLoadAssembler1D(x1,@Sourcef_2,Neu,Dir,y,w);
 b2 = GaussLoadAssembler1D(x2,@Sourcef_2,Neu,Dir,y,w);
@@ -105,7 +104,8 @@ b = LoadAssemblerDiscont2( b1,b2 ); %MAKE A NEW FUNCTION FOR TWO SUBDOMAINS
 
 M1 = GaussMassAssembler1D(x1,Dir,y,w);
 M2 = GaussMassAssembler1D(x2,Dir,y,w);
-M = blkdiag(M1,M2);
+M = StiffnessAssemblerDiscont2(M1,M2,1,1);
+% M = blkdiag(M1,M2);
 
 %Solve System at each time point
 
@@ -113,15 +113,15 @@ M = blkdiag(M1,M2);
 TP = 4; %Number of Time Points
 w = length(TP); %Stores the time points 
 w(1) = t0;
-w(2) = tend/TP;
-w(3) = 2*tend/TP;
-w(4) = 3*tend/TP;
+w(2) = tend/60;
+w(3) = tend/10;
+w(4) = 3*tend/10;
 w(5) = tend;
 
-Time1 = t0:             tau:    w(2);
-Time2 = tend/TP +   tau:tau:    w(3);
-Time3 = 2*tend/TP + tau:tau:    w(4);
-Time4 = 3*tend/TP + tau:tau:    w(5);
+Time1 = t0:        tau:    w(2);
+Time2 = w(2) + tau:tau:    w(3);
+Time3 = w(3) + tau:tau:    w(4);
+Time4 = w(4) + tau:tau:    w(5);
 
 u = zeros(length(x),length(t)+TP-1);
 for i = 1:length(x1)
@@ -169,7 +169,7 @@ for n = length(Time1)+length(Time2)+length(Time3):length(Time1)+length(Time2)+le
 end
 
 for i = 1:length(x2)
-v(i,4) = u(length(x1)+i,t(end));
+v(i,4) = u(length(x1)+i,length(Time1) + length(Time2) + length(Time3) + length(Time4));
 end
 
 toc %Ends implementation time

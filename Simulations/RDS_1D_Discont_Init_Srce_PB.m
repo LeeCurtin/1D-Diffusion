@@ -60,7 +60,7 @@ Dir = [0,0,0,0]; % Dirichlet Boundary Conditions
 
     
 function [D] = Diffusivity1(x1) 
-D1 = 3600*50.e-6;   %Diffusion coefficient (mm^2/h) in wafer for Carmustine
+D1 = 3600*67.e-6;   %Diffusion coefficient (mm^2/h) in wafer for Carmustine
 for i = 1:length(x1)
         D = D1;
 end
@@ -105,8 +105,8 @@ b = LoadAssemblerDiscont2( b1,b2 ); %MAKE A NEW FUNCTION FOR TWO SUBDOMAINS
 
 M1 = GaussMassAssembler1D(x1,Dir,y,w);
 M2 = GaussMassAssembler1D(x2,Dir,y,w);
-% M = StiffnessAssemblerDiscont2(M1,M2,1,1); %CHANGE TO THE NEW STIFFNESS FUNCTION
-M = blkdiag(M1,M2);
+ M = StiffnessAssemblerDiscont2(M1,M2,1,p); 
+% M = blkdiag(M1,M2);
 
 %Solve System at each time point
 
@@ -116,7 +116,7 @@ for i = 1:length(x1)
         u(i,1) = C_0f/l1;
 end
 
-theta = 1;
+theta = 0.5;
 LHS = M/tau + theta*A;
 for n = 1:length(t)-1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;

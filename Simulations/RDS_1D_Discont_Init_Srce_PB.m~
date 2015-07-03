@@ -1,4 +1,4 @@
-function [u,x1,x2,t,v] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,p)
+function [u,x1,x2,t,L] = RDS_1D_Discont_Init_Srce_PB(h,l1,l2,tau,tend,p)
 % A function to solve the following reaction diffusion equation:
 %C_t = D(x)C_xx + f(x,t) where f(x,t) is seperable in x and t and D is
 %constant on different regions of the domain.
@@ -105,67 +105,25 @@ b = LoadAssemblerDiscont2( b1,b2 ); %MAKE A NEW FUNCTION FOR TWO SUBDOMAINS
 
 M1 = GaussMassAssembler1D(x1,Dir,y,w);
 M2 = GaussMassAssembler1D(x2,Dir,y,w);
-M = blkdiag(M1,M2);
+ M = StiffnessAssemblerDiscont2(M1,M2,1,1); %CHANGE TO THE NEW STIFFNESS FUNCTION
+% M = blkdiag(M1,M2);
 
 %Solve System at each time point
 
 %Initial Condition
-TP = 4; %Number of Time Points
-w = length(TP); %Stores the time points 
-
-Time1 = t0:             tau:    tend/TP;
-Time2 = tend/TP +   tau:tau:    2*tend/TP;
-Time3 = 2*tend/TP + tau:tau:    3*tend/TP;
-Time4 = 3*tend/TP + tau:tau:    tend;
-
-u = zeros(length(x),length(t)+TP-1);
+u = zeros(length(x),length(t));
 for i = 1:length(x1)
         u(i,1) = C_0f/l1;
 end
 
-v = zeros(length(x2),length(TP)); %Stores u values at time points before reset
-
 theta = 1;
 LHS = M/tau + theta*A;
-
-for n = 1:length(Time1)-1
+for n = 1:length(t)-1
     RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
     u(:,n+1) = LHS\RHS;
+    100*n/(length(t)-1);
 end
 
-for i = 1:length(x2)
-v(i,1) = u(length(x1)+i,length(Time1));
-u(length(x1) + i,length(Time1)) = 0;
-end
-
-for n = length(Time1):length(Time1) + length(Time2) - 1
-    RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
-    u(:,n+1) = LHS\RHS;
-end
-
-for i = 1:length(x2)
-v(i,2) = u(length(x1)+i,length(Time1) + length(Time2));
-u(length(x1) + i,length(Time1)+length(Time2)) = 0;
-end
-
-for n = length(Time1)+length(Time2):length(Time1)+length(Time2)+ length(Time3) - 1
-    RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
-    u(:,n+1) = LHS\RHS;
-end
-
-for i = 1:length(x2)
-v(i,3) = u(length(x1)+i,length(Time1) + length(Time2) + length(Time3));
-u(length(x1) + i,length(Time1)+length(Time2)+length(Time3)) = 0;
-end
-
-for n = length(Time1)+length(Time2)+length(Time3):length(Time1)+length(Time2)+length(Time3)+length(Time4)-1
-    RHS = (M/tau-(1-theta)*A)*u(:,n) + ((1-theta)*g(n)+theta*g(n+1))*b;
-    u(:,n+1) = LHS\RHS;
-end
-
-for i = 1:length(x2)
-v(i,4) = u(length(x1)+i,t(end));
-end
 
 toc %Ends implementation time
 

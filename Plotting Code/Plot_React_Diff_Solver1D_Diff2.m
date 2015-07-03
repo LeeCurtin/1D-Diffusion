@@ -12,7 +12,7 @@ for i = 1:length(t)
     ylabel('Concentration');
     xlabel('Water,Wafer,Water,Brain');
     hold off
-    pause(0.01);
+    pause();
 end
 
 

@@ -125,8 +125,8 @@ b = LoadAssemblerDiscont3( b1,b2,b3 );
 M1 = GaussMassAssembler1D(x1,Dir,y,w);
 M2 = GaussMassAssembler1D(x2,Dir,y,w);
 M3 = GaussMassAssembler1D(x3,Dir,y,w);
-% M = StiffnessAssemblerDiscont3(M1,M2,M3,1,1);
-M = blkdiag(M1,M2,M3);
+M = StiffnessAssemblerDiscont3(M1,M2,M3,1,p);
+% M = blkdiag(M1,M2,M3);
 
 
 %Solve System at each time point
