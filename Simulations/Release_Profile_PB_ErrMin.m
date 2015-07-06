@@ -9,19 +9,26 @@ NUM_K = 30; %Number of k-values checked
 Store_Min_Err = zeros(1,NUM_K);
 
 for i = 1:NUM_K
-    k = i/10;
-    [~,~,x2,~,v,w] = RDS_1D_Discont_Init_Srce_PB_RESET(0.05,5,5,0.01,240,k);
+    k =  i/10;
+    [~,~,x2,~,v,w] = RDS_1D_Discont_Init_Srce_PB_RESET(0.05,3,2,0.01,240,k);
     
     [ test ] = Release_Profile_PB_RESET( v,w,x2 );
-    test
-    Err1 = abs(56.465 - test(2));
-    Err2 = abs(30.843 - (test(3)-test(2)));
-    Err3 = abs(6.838 - (test(4)-test(3)));
-    Err4 = abs(1.862 - (test(5)-test(4)));
+
+    %Methotrexate
+%     Err1 = abs(60.456 - test(2));
+%     Err2 = abs(30.843 - (test(3)-test(2)));
+%     Err3 = abs(6.838 - (test(4)-test(3)));
+%     Err4 = abs(1.862 - (test(5)-test(4)));
+
+    %Etoposide
+    Err1 = abs(33.222 - test(2));
+    Err2 = abs(50.486 - (test(3)-test(2)));
+    Err3 = abs(12.346 - (test(4)-test(3)));
+    Err4 = abs(3.946 - (test(5)-test(4)));
     
     Min_Err_temp = Err1+Err2+Err3+Err4;
     Store_Min_Err(i) = Min_Err_temp;
-    x(i) = i/10;
+    x(i) =  i/10;
     if Min_Err_temp < Min_Err
         Min_Err = Min_Err_temp;
         store = k;

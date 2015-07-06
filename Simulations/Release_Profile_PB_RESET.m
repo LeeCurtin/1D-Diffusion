@@ -18,11 +18,12 @@ for j = 2:size(v,2)+1 %Each Time Point
     test(j) = test_2 + test(j-1);
 end
 
-test_perc = 100*test;
-plot(w,test_perc)
-
-set(gca,'fontsize',15)
-xlabel('Time (hours)')
-ylabel('Total Percentage Concentration Released')
+test_perc = 100*test
+sum(test_perc)
+% plot(w,test_perc)
+% 
+% set(gca,'fontsize',15)
+% xlabel('Time (hours)')
+% ylabel('Total Percentage Concentration Released')
 
 end

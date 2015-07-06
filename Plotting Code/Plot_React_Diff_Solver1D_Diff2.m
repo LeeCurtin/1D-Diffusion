@@ -8,11 +8,11 @@ for i = 1:length(t)
     plot(x,u(:,i)) 
     hold on 
 %     plot(y,v(:,i))
-    axis([0 x(end) 0 0.35]);
+    axis([0 x(end) 0 20]);
     ylabel('Concentration');
     xlabel('Water,Wafer,Water,Brain');
     hold off
-    pause();
+    pause(0.01);
 end
 
 
