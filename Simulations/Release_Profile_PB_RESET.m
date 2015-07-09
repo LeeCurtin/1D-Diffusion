@@ -1,4 +1,4 @@
-function [ test_perc ] = Release_Profile_PB_RESET( v,w,x2 )
+function [ test_perc ] = Release_Profile_PB_RESET( v,C_0,x2 )
 %Release_Profile - Takes the various React_Diff_Solver1D's and outputs the
 %release profile for the paste over time
 
@@ -18,8 +18,8 @@ for j = 2:size(v,2)+1 %Each Time Point
     test(j) = test_2 + test(j-1);
 end
 
-test_perc = 100*test
-sum(test_perc)
+test_perc = 100*test/C_0;
+
 % plot(w,test_perc)
 % 
 % set(gca,'fontsize',15)

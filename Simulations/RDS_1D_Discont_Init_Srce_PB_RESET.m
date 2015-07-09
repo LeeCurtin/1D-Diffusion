@@ -1,4 +1,4 @@
-function [u,x1,x2,t,v,w] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,k)
+function [u,x1,x2,t,v,w,C_0] = RDS_1D_Discont_Init_Srce_PB_RESET(h,l1,l2,tau,tend,k,C_0f,C_0b)
 % A function to solve the following reaction diffusion equation:
 %C_t = D(x)C_xx + f(x,t) where f(x,t) is seperable in x and t and D is
 %constant on different regions of the domain.
@@ -42,8 +42,8 @@ t = t0:tau:tend;
 
 %Properties
 % k = 0.0625; %Rate of splitting of drug and paste
-C_0b = 10; %Initial 'bound' drug
-C_0f = 10; %Initial 'free' drug
+% C_0b = 10; %Initial 'bound' drug
+% C_0f = 0.1; %Initial 'free' drug
 C_0 = C_0b + C_0f; %Total drug in system
 
 
@@ -60,7 +60,7 @@ Dir = [0,0,0,0]; % Dirichlet Boundary Conditions
     
 function [D] = Diffusivity1(x1) 
 D1 = 3600*50.e-5;   %Diffusion coefficient (mm^2/h) in wafer for Carmustine
-% D1 = 3600*80.e-4;
+% D1 = 3600*50.e-3;
 for i = 1:length(x1)
         D = D1;
 end
@@ -69,7 +69,7 @@ end
 
 function [D] = Diffusivity2(x2)
 D2 = 3600*50.e-5;  %" " " water for Carmustine
-% D2 = 3600*80.e-3;
+% D2 = 3600*50.e-3;
 for i = 1:length(x2)
         D = D2;
 end
@@ -126,7 +126,7 @@ Time4 = w(4) + tau:tau:    w(5);
 
 u = zeros(length(x),length(t)+TP-1);
 for i = 1:length(x1)
-        u(i,1) = C_0f/l1;
+        u(i,1) = C_0f;
 end
 
 v = zeros(length(x2),length(TP)); %Stores u values at time points before reset

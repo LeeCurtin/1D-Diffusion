@@ -6,7 +6,7 @@ A = blkdiag(A1,A2);
 
 %Couple paste brain
 
-for i = 1:size(A1,1)
+for i = 1:size(A1,2)
     A(size(A1,1)+1,i) = A(size(A1,1),i);
     A(size(A1,1),i) = 0;
 end

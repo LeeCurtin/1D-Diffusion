@@ -7,16 +7,18 @@ figure(1)
 for i = 1:length(t)
 %     subplot(1,2,1)
     plot(x,u1(:,i)) 
-    axis([0 y(end) 0 1]);
+    axis([0 y(end) 0 0.2]);
     ylabel('Concentration');
     xlabel('Water,Wafer,Water,Brain');
     hold on
     
 %     subplot(1,2,2)
     plot(y,u2(:,i))
-    axis([0 y(end) 0 1]);
+    axis([0 y(end) 0 0.2]);
 %     ylabel('Concentration');
 %     xlabel('Water,Wafer,Water,Brain');
+
+
     hold off
 
 %     subplot(2,2,3)
@@ -33,7 +35,7 @@ for i = 1:length(t)
 %     xlabel('Water,Wafer,Water,Brain');
 %     title('P=3.67 (Carmustine)');
 %     
-    pause();
+    pause(0.01);
 end
 
 
