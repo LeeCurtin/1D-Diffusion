@@ -4,7 +4,7 @@ function [ Min_Err,store,Store_Min_Err,x ] = Release_Profile_PB_ErrMin(C_0f,C_0b
 %Error found as the sum of differences in released percentage concentration
 
 Min_Err = 10000; %Minimum stored error
-NUM_K = 100; %Number of k-values checked
+NUM_K = 101; %Number of k-values checked
 
 Store_Min_Err = zeros(1,NUM_K);
 
