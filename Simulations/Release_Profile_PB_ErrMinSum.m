@@ -1,4 +1,4 @@
-function [ Min_Err,store,Store_Min_Err,x ] = Release_Profile_PB_ErrMin(C_0f,C_0b)
+function [ Min_Err,store,Store_Min_Err,x ] = Release_Profile_PB_ErrMinSum(C_0f,C_0b)
 %Minimising the error between simulated release profiles and experimental
 %ones assuming knowledge of diffusion coefficients but not release rates
 %Error found as the sum of differences in released percentage concentration
@@ -24,9 +24,9 @@ for i = 1:NUM_K
 
 %   Etoposide
     Err1 = abs(33.222 - test(2));
-    Err2 = abs(50.486 - (test(3)-test(2)));
-    Err3 = abs(12.346 - (test(4)-test(3)));
-    Err4 = abs(3.946 - (test(5)-test(4)));
+    Err2 = abs(50.486 + 33.222 - test(3));
+    Err3 = abs(12.346 +50.486 + 33.222 - test(4));
+    Err4 = abs(3.946 + 12.346 +50.486 + 33.222 - test(5));
     
     Store_Err1(i) = Err1;
     Store_Err2(i) = Err2;
@@ -42,7 +42,6 @@ for i = 1:NUM_K
         store = k;
     end
 end
-
 plot(x,Store_Err1)
 xlabel('Rate')
 ylabel('Total Error in Percentage Differences')

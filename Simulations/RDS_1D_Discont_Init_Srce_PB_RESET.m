@@ -60,7 +60,7 @@ Dir = [0,0,0,0]; % Dirichlet Boundary Conditions
     
 function [D] = Diffusivity1(x1) 
 D1 = 3600*50.e-5;   %Diffusion coefficient (mm^2/h) in wafer for Carmustine
-% D1 = 3600*50.e-3;
+% D1 = 3600*50.e-7;
 for i = 1:length(x1)
         D = D1;
 end
@@ -69,7 +69,7 @@ end
 
 function [D] = Diffusivity2(x2)
 D2 = 3600*50.e-5;  %" " " water for Carmustine
-% D2 = 3600*50.e-3;
+% D2 = 3600*50.e-7;
 for i = 1:length(x2)
         D = D2;
 end
